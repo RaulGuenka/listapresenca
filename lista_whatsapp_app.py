@@ -120,7 +120,7 @@ column_config = {
     "Nome": st.column_config.TextColumn("Nome", disabled=True, width="medium"),
 }
 for label in LABEL_COLS:
-    column_config[label] = st.column_config.CheckboxColumn(label, default=False, width="small")
+    column_config[label] = st.column_config.CheckboxColumn(label, default=True, width="small")
 
 inverse_kit_cols = {v: k for k, v in KIT_COLS.items()}  # "Presença" -> "presenca", etc.
 
