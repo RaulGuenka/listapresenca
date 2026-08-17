@@ -4,7 +4,7 @@ Lista WhatsApp - Checklist de Kit por Equipe (com Supabase)
 Reproduz em Streamlit a tabela de checkboxes das colunas D:I da planilha
 "Batedores - Equipes" (aba "Lista WhatsApp"):
 
-    Equipe / Nome | Presença | Apito | Lanterna | Lanterna Sinalizadora | Colete
+    Equipe / Nome | Presença | Apito | Lanterna | Lanterna Sinalizadora | Colete | Caixinha | Devolução
 
 Os dados agora ficam na tabela `kit_checklist` do Supabase, então os
 checkboxes marcados persistem mesmo fechando o app ou reiniciando o servidor.
@@ -29,6 +29,8 @@ KIT_COLS = {
     "lanterna": "Lanterna",
     "lanterna_sinalizadora": "Lanterna Sinalizadora",
     "colete": "Colete",
+    "caixinha": "Caixinha",
+    "devolucao": "Devolução",
 }
 LABEL_COLS = list(KIT_COLS.values())      # nomes exibidos na tela
 TABLE = "kit_checklist"
@@ -49,7 +51,10 @@ def fetch_checklist() -> pd.DataFrame:
     supabase = get_client()
     resp = (
         supabase.table(TABLE)
-        .select("id, equipe, nome, presenca, apito, lanterna, lanterna_sinalizadora, colete, ordem")
+        .select(
+            "id, equipe, nome, presenca, apito, lanterna, lanterna_sinalizadora, "
+            "colete, caixinha, devolucao, ordem"
+        )
         .order("equipe")
         .order("ordem")
         .execute()
@@ -94,10 +99,11 @@ df_all = df_all.rename(columns={"nome": "Nome", **KIT_COLS})
 total_pessoas = len(df_all)
 total_presentes = int(df_all["Presença"].sum())
 
-col1, col2, col3, col4, col5, col6 = st.columns(6)
-col1.metric("Pessoas", total_pessoas)
-col2.metric("Presentes", f"{total_presentes}/{total_pessoas}")
-for col, key in zip([col3, col4, col5, col6], ["Apito", "Lanterna", "Lanterna Sinalizadora", "Colete"]):
+metric_cols = st.columns(2 + len(LABEL_COLS) - 1)  # Pessoas + Presença já contam, resto dos itens depois
+metric_cols[0].metric("Pessoas", total_pessoas)
+metric_cols[1].metric("Presentes", f"{total_presentes}/{total_pessoas}")
+outros_itens = [c for c in LABEL_COLS if c != "Presença"]
+for col, key in zip(metric_cols[2:], outros_itens):
     entregues = int(df_all[key].sum())
     col.metric(key, f"{entregues}/{total_pessoas}")
 
