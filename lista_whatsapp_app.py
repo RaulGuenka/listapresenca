@@ -125,7 +125,7 @@ for label in LABEL_COLS:
 inverse_kit_cols = {v: k for k, v in KIT_COLS.items()}  # "Presença" -> "presenca", etc.
 
 for equipe, df_equipe in df_all.groupby("equipe", sort=False):
-    df_equipe = df_equipe[["id", "Nome", *LABEL_COLS]].reset_index(drop=False)
+    df_equipe = df_equipe[["id", "Nome", *LABEL_COLS]].reset_index(drop=True)
 
     view_df = df_equipe
     if busca:
@@ -136,7 +136,7 @@ for equipe, df_equipe in df_all.groupby("equipe", sort=False):
     marcados = int(df_equipe["Presença"].sum())
     total = len(df_equipe)
 
-    with st.expander(f"**{equipe}** — {marcados}/{total} presentes", expanded=bool(busca)):
+    with st.expander(f"**{equipe}** — {marcados}/{total} presentes", expanded=True):
         edited = st.data_editor(
             view_df,
             column_config=column_config,
