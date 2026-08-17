@@ -120,12 +120,12 @@ column_config = {
     "Nome": st.column_config.TextColumn("Nome", disabled=True, width="medium"),
 }
 for label in LABEL_COLS:
-    column_config[label] = st.column_config.CheckboxColumn(label, default=True, width="small")
+    column_config[label] = st.column_config.CheckboxColumn(label, default=False, width="small")
 
 inverse_kit_cols = {v: k for k, v in KIT_COLS.items()}  # "Presença" -> "presenca", etc.
 
 for equipe, df_equipe in df_all.groupby("equipe", sort=False):
-    df_equipe = df_equipe[["id", "Nome", *LABEL_COLS]].reset_index(drop=True)
+    df_equipe = df_equipe[["id", "Nome", *LABEL_COLS]].reset_index(drop=False)
 
     view_df = df_equipe
     if busca:
